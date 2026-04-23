@@ -146,6 +146,19 @@ def predict(req: PredictRequest):
     }
 
 
+@app.get("/sample")
+def sample():
+    """Return one random held-out sample for the Explainability demo."""
+    df = pd.read_csv(os.path.join(DATA_DIR, "emotions.csv"))
+    df.columns = [c.lstrip("# ") for c in df.columns]
+    row = df.sample(1, random_state=np.random.randint(0, 1000))
+    feat_cols = [c for c in df.columns if c != "label"]
+    return {
+        "features": row[feat_cols].values[0].tolist(),
+        "true_label": row["label"].values[0],
+    }
+
+
 @app.get("/compare")
 def compare():
     return {
