@@ -13,3 +13,7 @@ joblib
 tqdm
 ipykernel
 jupyter
+fastapi
+uvicorn
+websockets
+python-multipart
