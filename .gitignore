@@ -1,9 +1,6 @@
 # Data (large CSV downloaded via kagglehub at runtime)
 data/
 
-# Trained model binaries
-models/
-
 # Generated result images
 results/
 
