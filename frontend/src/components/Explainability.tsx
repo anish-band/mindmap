@@ -164,6 +164,40 @@ export default function Explainability() {
           )}
         </motion.div>
 
+        {/* Loading skeleton */}
+        {explaining && !result && (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="space-y-6"
+          >
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <div className="h-3 w-20 bg-gray-800 rounded animate-pulse mb-4" />
+              <div className="h-10 w-40 bg-gray-800 rounded-lg animate-pulse" />
+            </div>
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+              <div className="h-3 w-52 bg-gray-800 rounded animate-pulse mb-6" />
+              <div className="space-y-3">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <div className="h-3 rounded bg-gray-800 animate-pulse" style={{ width: `${90 + i * 10}px` }} />
+                    <div className="h-4 flex-1 rounded bg-gray-800 animate-pulse" style={{ opacity: 1 - i * 0.09 }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="rounded-xl border border-gray-800 p-4">
+                  <div className="h-3 w-28 bg-gray-800 rounded animate-pulse mb-3" />
+                  <div className="h-7 w-16 bg-gray-800 rounded animate-pulse mb-3" />
+                  <div className="h-1 bg-gray-800 rounded-full animate-pulse" />
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
         {/* Results */}
         {result && (
           <motion.div

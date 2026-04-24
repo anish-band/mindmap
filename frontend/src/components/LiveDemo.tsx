@@ -122,7 +122,7 @@ export default function LiveDemo() {
 
         {/* Main panels */}
         <AnimatePresence>
-          {(status === "running" || status === "done") && current && (
+          {(status === "running" || status === "done") && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -133,23 +133,33 @@ export default function LiveDemo() {
                 <p className="text-xs text-gray-500 uppercase tracking-widest mb-4">
                   EEG Snapshot — 50 features
                 </p>
-                <ResponsiveContainer width="100%" height={160}>
-                  <LineChart data={eegData}>
-                    <XAxis dataKey="i" hide />
-                    <YAxis hide domain={["auto", "auto"]} />
-                    <Line
-                      type="monotone"
-                      dataKey="v"
-                      stroke="#6366f1"
-                      strokeWidth={1.5}
-                      dot={false}
-                      isAnimationActive={false}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-                <p className="text-xs text-gray-600 mt-2 text-center">
-                  Sample #{current.sample_index}
-                </p>
+                {current ? (
+                  <>
+                    <ResponsiveContainer width="100%" height={160}>
+                      <LineChart data={eegData}>
+                        <XAxis dataKey="i" hide />
+                        <YAxis hide domain={["auto", "auto"]} />
+                        <Line
+                          type="monotone"
+                          dataKey="v"
+                          stroke="#6366f1"
+                          strokeWidth={1.5}
+                          dot={false}
+                          isAnimationActive={false}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                    <p className="text-xs text-gray-600 mt-2 text-center">
+                      Sample #{current.sample_index}
+                    </p>
+                  </>
+                ) : (
+                  <div className="h-[160px] flex flex-col gap-2 justify-center px-2">
+                    {[0.6, 1, 0.4, 0.8, 0.5].map((w, i) => (
+                      <div key={i} className="h-1.5 bg-gray-800 rounded-full animate-pulse" style={{ width: `${w * 100}%` }} />
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Emotion label + confidence */}
@@ -158,29 +168,33 @@ export default function LiveDemo() {
                   Prediction
                 </p>
                 <div className="flex-1 flex items-center justify-center">
-                  <span
-                    className={`text-5xl font-bold tracking-tight ${
-                      LABEL_STYLE[current.predicted_label]?.color ?? "text-white"
-                    }`}
-                  >
-                    {current.predicted_label}
-                  </span>
+                  {current ? (
+                    <span
+                      className={`text-5xl font-bold tracking-tight ${
+                        LABEL_STYLE[current.predicted_label]?.color ?? "text-white"
+                      }`}
+                    >
+                      {current.predicted_label}
+                    </span>
+                  ) : (
+                    <div className="h-12 w-36 bg-gray-800 rounded-xl animate-pulse" />
+                  )}
                 </div>
                 <div className="space-y-2 mt-4">
                   {(["POSITIVE", "NEUTRAL", "NEGATIVE"] as const).map((lbl) => {
-                    const isActive = lbl === current.predicted_label;
+                    const isActive = current ? lbl === current.predicted_label : false;
                     return (
                       <div key={lbl} className="flex items-center gap-3">
                         <span className="text-xs text-gray-500 w-16">{lbl}</span>
                         <div className="flex-1 h-1.5 bg-gray-800 rounded-full overflow-hidden">
                           <motion.div
                             className={`h-full rounded-full ${LABEL_STYLE[lbl].bg}`}
-                            animate={{ width: isActive ? `${current.confidence * 100}%` : "0%" }}
+                            animate={{ width: isActive ? `${current!.confidence * 100}%` : "0%" }}
                             transition={{ duration: 0.2 }}
                           />
                         </div>
                         <span className="text-xs text-gray-400 w-10 text-right">
-                          {isActive ? `${(current.confidence * 100).toFixed(0)}%` : "—"}
+                          {isActive ? `${(current!.confidence * 100).toFixed(0)}%` : "—"}
                         </span>
                       </div>
                     );
@@ -195,7 +209,7 @@ export default function LiveDemo() {
                     Rolling Accuracy
                   </p>
                   <span className="text-lg font-bold text-white">
-                    {(current.rolling_accuracy * 100).toFixed(1)}%
+                    {current ? `${(current.rolling_accuracy * 100).toFixed(1)}%` : "—"}
                   </span>
                 </div>
                 <ResponsiveContainer width="100%" height={160}>
